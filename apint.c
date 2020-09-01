@@ -13,7 +13,8 @@ ApInt *apint_create_from_u64(uint64_t val) {
 	/* TODO: implement */
     ApInt * new = (ApInt *) malloc(sizeof(ApInt));
     new->size = 1;
-    new -> value = (uint64_t *) malloc(sizeof(new->size));
+    //new -> value = (uint64_t *) malloc(sizeof(new->size));
+    new -> value = (uint64_t *) malloc(sizeof(uint64_t));
     new->value[0] = val;
 	//assert(0);
 	return new;
