@@ -56,8 +56,13 @@ ApInt *apint_create_from_hex(const char *hex) {
                     temp = 1;
                     break;
             }
-            //val += temp * pow(16, digits - j);//fix to work with multiples of 16 etc
-            val += temp;
+            val += temp * pow(16, digits - j-1);//fix to work with multiples of 16 etc
+            //val += temp;
+            printf("%d\n", val);
+            //printf("%d\n", pow(16, digits -j-1));
+            //printf("%d\n", digits);
+            //printf("%d\n", j);
+            //val += temp;
             if(j == 0){//reached most significant bit
                 new->value[i] = val;
                 break;

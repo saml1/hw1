@@ -23,6 +23,8 @@ typedef struct {
 	ApInt *ap110660361;
 	ApInt *max1;
 	ApInt *easy;
+	ApInt *easy1;
+	ApInt *ap11;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -70,6 +72,8 @@ TestObjs *setup(void) {
 	objs->ap110660361 = apint_create_from_u64(110660361UL);
 	objs->max1 = apint_create_from_u64(0xFFFFFFFFFFFFFFFFUL);
 	objs->easy = apint_create_from_hex("0\0");
+	objs->easy1 = apint_create_from_hex("1\0");
+	objs->ap11 = apint_create_from_hex("11\0");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -81,6 +85,8 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->ap110660361);
 	apint_destroy(objs->max1);
 	apint_destroy(objs->easy);
+	apint_destroy(objs->easy1);
+	apint_destroy(objs->ap11);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -88,6 +94,8 @@ void cleanup(TestObjs *objs) {
 
 void testCreateFromU64(TestObjs *objs) {
 	ASSERT(0UL == apint_get_bits(objs->ap0, 0));
+	//uint64_t a = apint_get_bits(objs->ap0, 0);
+    //printf("%d\n", &a);
 	ASSERT(1UL == apint_get_bits(objs->ap1, 0));
 	ASSERT(110660361UL == apint_get_bits(objs->ap110660361, 0));
 	ASSERT(0xFFFFFFFFFFFFFFFFUL == apint_get_bits(objs->max1, 0));
@@ -226,8 +234,10 @@ void testSub(TestObjs *objs) {
 
 void testCreateFromHex(TestObjs *objs){
     //uint64_t a = apint_get_bits(objs->easy, 0);
-    //printf("%lu\n", &a);
-    ASSERT(0UL == apint_get_bits(objs->easy, 0));
+    //printf("%d\n", &a);
+    ASSERT(0x0 == apint_get_bits(objs->easy, 0));
+    ASSERT(0x1 == apint_get_bits(objs->easy1, 0));
+    ASSERT(0x11 == apint_get_bits(objs->ap11, 0));
 }
 
 /* TODO: add more test functions */
