@@ -8,6 +8,7 @@
 #include <string.h>
 #include <assert.h>
 #include "apint.h"
+#include <math.h>
 
 ApInt *apint_create_from_u64(uint64_t val) {
 	/* TODO: implement */
@@ -22,8 +23,50 @@ ApInt *apint_create_from_u64(uint64_t val) {
 
 ApInt *apint_create_from_hex(const char *hex) {
 	/* TODO: implement */
+	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
+    int digits = 0;
+    //finding total amount of "digits"
+    while(hex[digits] != '\0'){
+        digits++;
+    }
+
+    //finding how many uints are needed
+    int uint_total = 0;
+    if(digits % 16 == 0){
+        uint_total = digits / 16;
+    }else{
+        uint_total = (digits / 16) + 1;
+    }
+    
+    new->size = (uint64_t) uint_total;
+    new->value = (uint64_t *) malloc(sizeof(uint64_t) * uint_total);
+    
+    //int curr_apint = 0;//
+
+    //iterating from least to most significant digit
+    for(int i = 0; i < uint_total; i++){
+        uint64_t val = 0;
+        for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
+            int temp;
+            switch(hex[j]){
+                case '0':
+                    temp = 0;
+                    break;
+                case '1':
+                    temp = 1;
+                    break;
+            }
+            //val += temp * pow(16, digits - j);//fix to work with multiples of 16 etc
+            val += temp;
+            if(j == 0){//reached most significant bit
+                new->value[i] = val;
+                break;
+            }
+        }
+        new->value[i] = val;
+    }
 	//assert(0);
-	return NULL;
+	return new;
 }
 
 void apint_destroy(ApInt *ap) {

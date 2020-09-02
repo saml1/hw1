@@ -22,6 +22,7 @@ typedef struct {
 	ApInt *ap1;
 	ApInt *ap110660361;
 	ApInt *max1;
+	ApInt *easy;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -35,6 +36,7 @@ void testCompare(TestObjs *objs);
 void testFormatAsHex(TestObjs *objs);
 void testAdd(TestObjs *objs);
 void testSub(TestObjs *objs);
+void testCreateFromHex(TestObjs *objs);
 /* TODO: add more test function prototypes */
 
 int main(int argc, char **argv) {
@@ -55,6 +57,7 @@ int main(int argc, char **argv) {
 	TEST(testFormatAsHex);
 	TEST(testAdd);
 	TEST(testSub);
+	TEST(testCreateFromHex);
 	/* TODO: use TEST macro to execute more test functions */
 
 	TEST_FINI();
@@ -66,6 +69,7 @@ TestObjs *setup(void) {
 	objs->ap1 = apint_create_from_u64(1UL);
 	objs->ap110660361 = apint_create_from_u64(110660361UL);
 	objs->max1 = apint_create_from_u64(0xFFFFFFFFFFFFFFFFUL);
+	objs->easy = apint_create_from_hex("0\0");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -76,6 +80,7 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->ap1);
 	apint_destroy(objs->ap110660361);
 	apint_destroy(objs->max1);
+	apint_destroy(objs->easy);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -217,6 +222,12 @@ void testSub(TestObjs *objs) {
 	apint_destroy(b);
 	apint_destroy(a);
 	free(s);
+}
+
+void testCreateFromHex(TestObjs *objs){
+    //uint64_t a = apint_get_bits(objs->easy, 0);
+    //printf("%lu\n", &a);
+    ASSERT(0UL == apint_get_bits(objs->easy, 0));
 }
 
 /* TODO: add more test functions */
