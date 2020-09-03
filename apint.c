@@ -42,6 +42,7 @@ ApInt *apint_create_from_hex(const char *hex) {
 
     //iterating from least to most significant digit
     for(int i = 0; i < uint_total; i++){
+        //printf("%d\n", i);
         uint64_t val = 0;
         for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
             uint64_t temp;
@@ -52,15 +53,16 @@ ApInt *apint_create_from_hex(const char *hex) {
             }else if(hex[j] >= 97 && hex[j] <= 102){//char is a-f
                 temp = 10 + hex[j] - 97;
             }
-            
-            val += temp * (uint64_t) pow(16, digits - j-1);
+            //printf("temp: %d\n", temp);
+            val += temp * (uint64_t) pow(16,digits - j-1-i*16);
             /*printf("16 pow: %lu\n", digits - j - 1);
             printf("temp: %lu\n", temp);
             printf("val in inner for loop: %lu\n", val);
             printf("\n");*/
-            //printf("temp*pow: %d\n", (uint64_t) temp * pow(16, digits - j-1));
+            //printf("temp*pow: %f\n", (uint64_t) temp * pow(16, digits - j-1-i*16));
             // printf("temp*pow: %d\n", temp*pow(16, digits - j-1));
             //printf("temp: %d\n", temp);
+            //printf("val: %lu\n", val);
             if(j == 0){//reached most significant bit
                 new->value[i] = val;
                 break;
@@ -75,9 +77,9 @@ ApInt *apint_create_from_hex(const char *hex) {
 
 void apint_destroy(ApInt *ap) {
 	/* TODO: implement */
-    for(int i = 0; i < ap->size; i++){
+    //for(int i = 0; i < ap->size; i++){
         free(ap->value);
-    }
+    //}
     free(ap);
 	//assert(0);
 }
