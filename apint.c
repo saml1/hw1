@@ -48,14 +48,21 @@ ApInt *apint_create_from_hex(const char *hex) {
         uint64_t val = 0;
         for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
             int temp;
-            switch(hex[j]){
+            if(hex[j] >= 48 && hex[j] <= 57){//char is 0-9
+                temp = hex[j] - 48;
+            }else if(hex[j] >= 65 && hex[j] <= 70){//char is A-F
+                temp = 10 + (hex[j] - 65);
+            }else if(hex[j] >= 97 && hex[j] <= 102){//char is a-f
+                temp = 10 + hex[j] - 97;
+            }
+            /*switch(hex[j]){
                 case '0':
                     temp = 0;
                     break;
                 case '1':
                     temp = 1;
                     break;
-            }
+            }*/
             val += temp * pow(16, digits - j-1);//fix to work with multiples of 16 etc
             //val += temp;
             printf("%d\n", val);
