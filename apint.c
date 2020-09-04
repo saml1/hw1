@@ -46,6 +46,7 @@ ApInt *apint_create_from_hex(const char *hex) {
         uint64_t val = 0;
         for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
             uint64_t temp;
+            //printf("j: %d\n", j);
             if(hex[j] >= 48 && hex[j] <= 57){//char is 0-9
                 temp = hex[j] - 48;
             }else if(hex[j] >= 65 && hex[j] <= 70){//char is A-F
@@ -55,6 +56,7 @@ ApInt *apint_create_from_hex(const char *hex) {
             }
             //printf("temp: %d\n", temp);
             val += temp * (uint64_t) pow(16,digits - j-1-i*16);
+            //printf("val: %lX\n", val);
             /*printf("16 pow: %lu\n", digits - j - 1);
             printf("temp: %lu\n", temp);
             printf("val in inner for loop: %lu\n", val);

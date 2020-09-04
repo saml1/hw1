@@ -33,6 +33,7 @@ typedef struct {
 	ApInt *apf15;
 	ApInt *rand16;
 	ApInt *apf17;
+	ApInt *randbig1;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -90,6 +91,7 @@ TestObjs *setup(void) {
 	objs->apf15 = apint_create_from_hex("FfFffffffffffff\0");
 	objs->rand16 = apint_create_from_hex("484FA4cb04359dee\0");
 	objs->apf17 = apint_create_from_hex("fFfFfffffffffffff\0");
+	objs->randbig1 = apint_create_from_hex("9031f4a0b41b53cc61d084e\0");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -111,6 +113,7 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->apf15);
 	apint_destroy(objs->rand16);
 	apint_destroy(objs->apf17);
+	apint_destroy(objs->randbig1);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -271,8 +274,11 @@ void testCreateFromHex(TestObjs *objs){
     ASSERT(0x484fa4cb04359dee == apint_get_bits(objs->rand16, 0));
     ASSERT(0xffffffffffffffff == apint_get_bits(objs->apf17, 0));
     ASSERT(0xf == apint_get_bits(objs->apf17, 1));
-    /*printf("%X\n", apint_get_bits(objs->max2, 0));
-    printf("%X\n", apint_get_bits(objs->apf17, 0));
+    ASSERT(0x0b41b53cc61d084e == apint_get_bits(objs->randbig1, 0));
+    ASSERT(0x9031f4a == apint_get_bits(objs->randbig1, 1));
+    //printf("bit 0: %lX\n", apint_get_bits(objs->randbig1, 0));
+    //printf("bit 1: %lX\n", apint_get_bits(objs->randbig1, 1));
+    /*printf("%X\n", apint_get_bits(objs->apf17, 0));
     printf("%lX", apint_get_bits(objs->apf17, 1));*/
 }
 
