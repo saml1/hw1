@@ -163,8 +163,8 @@ char *apint_format_as_hex(ApInt *ap) {
 	    s = "0";
 	    printf("ok\n");
 	}*/
-	printf("s: %s\n", s);
-	printf("size: %d\n", string_size);
+	//printf("s: %s\n", s);
+	//printf("size: %d\n", string_size);
 	s[string_size] = '\0';
 	return s;
 }
