@@ -136,7 +136,7 @@ char *apint_format_as_hex(ApInt *ap) {
 	            /*if(curr_val % (uint64_t) pow(16, j) != 0){
 	                temp = curr_val / (pow(16,j));
 	            }*/
-	            temp = curr_val / (pow(16,j));//this is the "number" hex value (0-15)
+	            temp = curr_val / (uint64_t) (pow(16,j));//this is the "number" hex value (0-15)
 	            if(temp == 16){
 	                //printf("temp's 16\n");
 	                temp -= 1;
