@@ -129,13 +129,20 @@ char *apint_format_as_hex(ApInt *ap) {
 	for(int i = ap->size - 1; i >= 0; i--){//looping through each value element
 	    uint64_t curr_val = ap->value[i];
 	    uint64_t temp = 0;
-	    //printf("curr_val: %d\n", curr_val);
+	    //printf("curr_val: %lX\n", curr_val);
 	    for(int j = 15; j >= 0; j--){
 	        if(curr_val >= pow(16, j)){
 	            //printf("Here, j= %d\n", j);
+	            /*if(curr_val % (uint64_t) pow(16, j) != 0){
+	                temp = curr_val / (pow(16,j));
+	            }*/
 	            temp = curr_val / (pow(16,j));//this is the "number" hex value (0-15)
+	            if(temp == 16){
+	                temp -= 1;
+	            }
 	            //printf("temp: %d\n", temp);//problem is dealing with a 0- fix
 	            curr_val -= temp * pow(16, j);
+	            //printf("curr_val inside inner loop: %lX\n", curr_val);
 	            string_size ++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
 	            if(temp < 10){
@@ -147,6 +154,7 @@ char *apint_format_as_hex(ApInt *ap) {
 	            string_size++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
 	            s[string_size-1] = '0';
+	            //printf("ok\n");
 	        }
 	    }	   
 	}
@@ -155,8 +163,8 @@ char *apint_format_as_hex(ApInt *ap) {
 	    s = "0";
 	    printf("ok\n");
 	}*/
-	//printf("s: %s\n", s);
-	//printf("size: %d\n", string_size);
+	printf("s: %s\n", s);
+	printf("size: %d\n", string_size);
 	s[string_size] = '\0';
 	return s;
 }
