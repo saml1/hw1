@@ -191,6 +191,12 @@ void testFormatAsHex(TestObjs *objs) {
 	
 	ASSERT(0 == strcmp("484fa4cb04359dee", (s = apint_format_as_hex(objs->rand16))));
 	free(s);
+	
+	ASSERT(0 == strcmp("9031f4a0b41b53cc61d084e", (s = apint_format_as_hex(objs->randbig1))));
+	free(s);
+	
+	ASSERT(0 == strcmp("624aab9dc8ef44f0574833f57a606dd17dd7d8d2ae61debb8b08", (s = apint_format_as_hex(objs->randbig2))));
+	free(s);
 }
 
 void testAdd(TestObjs *objs) {
