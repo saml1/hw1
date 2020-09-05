@@ -81,12 +81,12 @@ TestObjs *setup(void) {
 	objs->ap1 = apint_create_from_u64(1UL);
 	objs->ap110660361 = apint_create_from_u64(110660361UL);
 	objs->max1 = apint_create_from_u64(0xFFFFFFFFFFFFFFFFUL);
-	objs->easy = apint_create_from_hex("0\0");
-	objs->easy1 = apint_create_from_hex("1\0");
-	objs->ap11 = apint_create_from_hex("11\0");
+	objs->easy = apint_create_from_hex("0");
+	objs->easy1 = apint_create_from_hex("1");
+	objs->ap11 = apint_create_from_hex("11");
 	objs->ap1c1 = apint_create_from_hex("1c1\0");
 	objs->apfffff = apint_create_from_hex("fFfFf\0");
-	objs->max2 = apint_create_from_hex("fFfFffffffffffff\0");
+	objs->max2 = apint_create_from_hex("fFfFffffffffffff");
 	objs->apf7 = apint_create_from_hex("fffffff\0");
 	objs->apf8 = apint_create_from_hex("ffffffff\0");
 	objs->apf15 = apint_create_from_hex("FfFffffffffffff\0");
@@ -187,6 +187,9 @@ void testFormatAsHex(TestObjs *objs) {
 	free(s);
 
 	ASSERT(0 == strcmp("ffffffffffffffff", (s = apint_format_as_hex(objs->max1))));
+	free(s);
+	
+	ASSERT(0 == strcmp("484fa4cb04359dee", (s = apint_format_as_hex(objs->rand16))));
 	free(s);
 }
 

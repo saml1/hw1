@@ -138,10 +138,11 @@ char *apint_format_as_hex(ApInt *ap) {
 	            }*/
 	            temp = curr_val / (pow(16,j));//this is the "number" hex value (0-15)
 	            if(temp == 16){
+	                //printf("temp's 16\n");
 	                temp -= 1;
 	            }
 	            //printf("temp: %d\n", temp);//problem is dealing with a 0- fix
-	            curr_val -= temp * pow(16, j);
+	            curr_val -= temp * (uint64_t) pow(16, j);
 	            //printf("curr_val inside inner loop: %lX\n", curr_val);
 	            string_size ++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
@@ -166,6 +167,7 @@ char *apint_format_as_hex(ApInt *ap) {
 	//printf("s: %s\n", s);
 	//printf("size: %d\n", string_size);
 	s[string_size] = '\0';
+	//printf("s: %s\n", s);
 	return s;
 }
 
