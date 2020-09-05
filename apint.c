@@ -114,7 +114,51 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 char *apint_format_as_hex(ApInt *ap) {
 	/* TODO: implement */
 	//assert(0);
-	return NULL;
+	if(ap->size == 1 && ap->value[0] == 0){
+	    //s = "0";
+	    //printf("ok\n");
+	    char * s = (char *) malloc(sizeof(char) * 2);
+	    s[0] = '0';
+	    s[1] = '\0';
+	    //s = "0";
+	    return s;
+	}
+	//printf("here\n");
+	char * s = (char *) malloc(sizeof(char) * 2);
+	int string_size = 0;
+	for(int i = ap->size - 1; i >= 0; i--){//looping through each value element
+	    uint64_t curr_val = ap->value[i];
+	    uint64_t temp = 0;
+	    //printf("curr_val: %d\n", curr_val);
+	    for(int j = 15; j >= 0; j--){
+	        if(curr_val >= pow(16, j)){
+	            //printf("Here, j= %d\n", j);
+	            temp = curr_val / (pow(16,j));//this is the "number" hex value (0-15)
+	            //printf("temp: %d\n", temp);//problem is dealing with a 0- fix
+	            curr_val -= temp * pow(16, j);
+	            string_size ++;
+	            s = realloc(s, string_size * sizeof(char) + 1);
+	            if(temp < 10){
+	                s[string_size -1] = 48 + temp;//48 is '0'
+	            }else{
+	                s[string_size-1] = 87 + temp; //97 is 'a'
+	            }
+	        }else if(string_size > 0){
+	            string_size++;
+	            s = realloc(s, string_size * sizeof(char) + 1);
+	            s[string_size-1] = '0';
+	        }
+	    }	   
+	}
+	//printf("%d\n", string_size);
+	/*if(ap->size == 1 && ap->value[0] == 0){
+	    s = "0";
+	    printf("ok\n");
+	}*/
+	//printf("s: %s\n", s);
+	//printf("size: %d\n", string_size);
+	s[string_size] = '\0';
+	return s;
 }
 
 ApInt *apint_add(const ApInt *a, const ApInt *b) {

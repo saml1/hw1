@@ -34,6 +34,7 @@ typedef struct {
 	ApInt *rand16;
 	ApInt *apf17;
 	ApInt *randbig1;
+	ApInt *randbig2;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -92,6 +93,7 @@ TestObjs *setup(void) {
 	objs->rand16 = apint_create_from_hex("484FA4cb04359dee\0");
 	objs->apf17 = apint_create_from_hex("fFfFfffffffffffff\0");
 	objs->randbig1 = apint_create_from_hex("9031f4a0b41b53cc61d084e\0");
+	objs->randbig2 = apint_create_from_hex("624aab9dc8ef44f0574833f57a606dd17dd7d8d2ae61debb8b08\0");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -114,6 +116,7 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->rand16);
 	apint_destroy(objs->apf17);
 	apint_destroy(objs->randbig1);
+	apint_destroy(objs->randbig2);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -171,7 +174,9 @@ void testCompare(TestObjs *objs) {
 
 void testFormatAsHex(TestObjs *objs) {
 	char *s;
-
+	//s = apint_format_as_hex(objs->ap0);
+    //printf("returned: %c\n", s[0]);
+    //printf("strcmp: %d\n", strcmp("0", s));
 	ASSERT(0 == strcmp("0", (s = apint_format_as_hex(objs->ap0))));
 	free(s);
 
@@ -276,6 +281,11 @@ void testCreateFromHex(TestObjs *objs){
     ASSERT(0xf == apint_get_bits(objs->apf17, 1));
     ASSERT(0x0b41b53cc61d084e == apint_get_bits(objs->randbig1, 0));
     ASSERT(0x9031f4a == apint_get_bits(objs->randbig1, 1));
+    ASSERT(0xd8d2ae61debb8b08 == apint_get_bits(objs->randbig2, 0));
+    ASSERT(0x33f57a606dd17dd7 == apint_get_bits(objs->randbig2, 1));
+    ASSERT(0xab9dc8ef44f05748 == apint_get_bits(objs->randbig2, 2));
+    ASSERT(0x624a == apint_get_bits(objs->randbig2, 3));
+    //printf("yeet\n");
     //printf("bit 0: %lX\n", apint_get_bits(objs->randbig1, 0));
     //printf("bit 1: %lX\n", apint_get_bits(objs->randbig1, 1));
     /*printf("%X\n", apint_get_bits(objs->apf17, 0));
