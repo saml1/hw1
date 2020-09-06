@@ -198,5 +198,19 @@ ApInt *apint_sub(const ApInt *a, const ApInt *b) {
 int apint_compare(const ApInt *left, const ApInt *right) {
 	/* TODO: implement */
 	//assert(0);
+	if(left->size > right-> size){
+	    return 1;
+	}else if(left->size < right->size){
+	    return -1;
+	}else{
+	    //ASSERT(left-> size == right->size);
+	    for(int i = left->size - 1; i >= 0; i--){
+	        if(left->value[i] > right->value[i]){
+	            return 1;
+	        } else if(left->value[i] < right->value[i]){
+	            return -1;
+	        }
+	    }
+	}
 	return 0;
 }

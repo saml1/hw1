@@ -35,6 +35,8 @@ typedef struct {
 	ApInt *apf17;
 	ApInt *randbig1;
 	ApInt *randbig2;
+	ApInt *rubyrand1;
+	ApInt *rubyrand2;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -94,6 +96,8 @@ TestObjs *setup(void) {
 	objs->apf17 = apint_create_from_hex("fFfFfffffffffffff\0");
 	objs->randbig1 = apint_create_from_hex("9031f4a0b41b53cc61d084e\0");
 	objs->randbig2 = apint_create_from_hex("624aab9dc8ef44f0574833f57a606dd17dd7d8d2ae61debb8b08\0");
+	objs->rubyrand1 = apint_create_from_hex("c8e0ef88dac5dafde8ed537c1ca7e95604e6724362e349721061cb1cdb816cc0b72d0fb0ea690d9c90b91d71");
+	objs->rubyrand2 = apint_create_from_hex("569dd3f8a1faab4e675d07b0c64845adb9366b2333d66b06315b4d1a4a98860d3453729cebd656a197c2b");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -117,6 +121,8 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->apf17);
 	apint_destroy(objs->randbig1);
 	apint_destroy(objs->randbig2);
+	apint_destroy(objs->rubyrand1);
+	apint_destroy(objs->rubyrand2);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -137,6 +143,7 @@ void testHighestBitSet(TestObjs *objs) {
 	ASSERT(26 == apint_highest_bit_set(objs->ap110660361));
 	ASSERT(63 == apint_highest_bit_set(objs->max1));
 	ASSERT(91 == apint_highest_bit_set(objs->randbig1));
+	
 }
 
 void testLshiftN(TestObjs *objs) {
@@ -171,6 +178,8 @@ void testCompare(TestObjs *objs) {
 	ASSERT(apint_compare(objs->ap0, objs->ap110660361) < 0);
 	/* 1 < 110660361 */
 	ASSERT(apint_compare(objs->ap1, objs->ap110660361) < 0);
+	
+	ASSERT(apint_compare(objs->rubyrand1, objs->rubyrand2) > 0);
 }
 
 void testFormatAsHex(TestObjs *objs) {
