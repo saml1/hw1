@@ -136,6 +136,7 @@ void testHighestBitSet(TestObjs *objs) {
 	ASSERT(0 == apint_highest_bit_set(objs->ap1));
 	ASSERT(26 == apint_highest_bit_set(objs->ap110660361));
 	ASSERT(63 == apint_highest_bit_set(objs->max1));
+	ASSERT(91 == apint_highest_bit_set(objs->randbig1));
 }
 
 void testLshiftN(TestObjs *objs) {
@@ -196,6 +197,9 @@ void testFormatAsHex(TestObjs *objs) {
 	free(s);
 	
 	ASSERT(0 == strcmp("624aab9dc8ef44f0574833f57a606dd17dd7d8d2ae61debb8b08", (s = apint_format_as_hex(objs->randbig2))));
+	free(s);
+	
+	ASSERT(0 == strcmp("fffffffffffffffff", (s = apint_format_as_hex(objs->apf17))));
 	free(s);
 }
 

@@ -96,7 +96,18 @@ uint64_t apint_get_bits(ApInt *ap, unsigned n) {
 int apint_highest_bit_set(ApInt *ap) {
 	/* TODO: implement */
 	//assert(0);
-	return -1;
+	if(ap->size == 1 && ap->value[0] == 0){//special case
+	    return -1;
+	}
+	
+	int temp = 0;
+	for(int i = 0; i < 64; i++){
+	    if(ap->value[ap->size - 1] >= pow(2, i)){
+	        temp = i;
+	    }
+	}
+	printf("returning: %d\n", temp + 1 + 64*(ap->size -1));
+	return temp + 64*(ap->size -1);
 }
 
 ApInt *apint_lshift(ApInt *ap) {
