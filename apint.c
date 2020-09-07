@@ -106,14 +106,40 @@ int apint_highest_bit_set(ApInt *ap) {
 	        temp = i;
 	    }
 	}
-	printf("returning: %d\n", temp + 1 + 64*(ap->size -1));
+	//printf("returning: %d\n", temp + 1 + 64*(ap->size -1));
 	return temp + 64*(ap->size -1);
 }
 
 ApInt *apint_lshift(ApInt *ap) {
 	/* TODO: implement */
-	//assert(0);
-	return NULL;
+	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
+	new->size = ap->size;
+	new->value = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//will have to realloc if overflow
+
+	uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//will hold values of high bits lost from overflow
+	
+	for(int i = ap->size - 1; i >= 0; i--){//going from lowest to highest index
+	    overflow_vals[i] = ap->value[i] >> 63;//this is what needs to be added to the next index
+	    new->value[i] = ap->value[i] << 1;//may lose bits to overflow but was recorded in overflow_vals
+	}
+	
+	for(int i = ap->size -1; i > 0; i--){//add code to deal with index 0 (will have to realloc)
+	    new->value[i] += overflow_vals[i+1];
+	}
+
+	if(overflow_vals[0] != 0){
+	    new->size += 1;
+	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+	    for(int i = new->size - 1; i > 0; i--){
+	        new->value[i] = new->value[i-1];
+	    }
+	    new->value[0] = overflow_vals[0];
+	}else{
+	    
+	}
+	
+	free(overflow_vals);
+	return new;
 }
 
 ApInt *apint_lshift_n(ApInt *ap, unsigned n) {

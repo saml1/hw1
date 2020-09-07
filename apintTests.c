@@ -51,6 +51,7 @@ void testFormatAsHex(TestObjs *objs);
 void testAdd(TestObjs *objs);
 void testSub(TestObjs *objs);
 void testCreateFromHex(TestObjs *objs);
+void testLshift(TestObjs *objs);
 /* TODO: add more test function prototypes */
 
 int main(int argc, char **argv) {
@@ -72,6 +73,7 @@ int main(int argc, char **argv) {
 	TEST(testAdd);
 	TEST(testSub);
 	TEST(testCreateFromHex);
+	TEST(testLshift);
 	/* TODO: use TEST macro to execute more test functions */
 
 	TEST_FINI();
@@ -284,6 +286,30 @@ void testSub(TestObjs *objs) {
 	apint_destroy(b);
 	apint_destroy(a);
 	free(s);
+}
+
+void testLshift(TestObjs *objs){
+    ApInt * result;
+    
+    result = apint_lshift(objs->ap0);
+    ASSERT(0UL == apint_get_bits(result, 0));
+    apint_destroy(result);
+    
+    result = apint_lshift(objs->ap1);
+    ASSERT(2UL == apint_get_bits(result, 0));
+    apint_destroy(result);
+    
+    result = apint_lshift(objs->ap110660361);
+    //printf("%lX\n", apint_get_bits(result, 0));
+    ASSERT(221320722UL == apint_get_bits(result, 0));
+    apint_destroy(result);
+    
+    result = apint_lshift(objs->max1);
+    //printf("%lX\n", apint_get_bits(result, 0));
+    //printf("%lX\n", apint_get_bits(result, 1));
+    ASSERT(0xfffffffffffffffe == apint_get_bits(result, 1));
+    ASSERT(0x1 == apint_get_bits(result, 0));
+    apint_destroy(result);
 }
 
 void testCreateFromHex(TestObjs *objs){
