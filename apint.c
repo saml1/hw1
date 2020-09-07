@@ -123,11 +123,13 @@ ApInt *apint_lshift(ApInt *ap) {
 	    new->value[i] = ap->value[i] << 1;//may lose bits to overflow but was recorded in overflow_vals
 	}
 	
-	for(int i = ap->size -1; i > 0; i--){//add code to deal with index 0 (will have to realloc)
+	for(int i = ap->size -2; i > 0; i--){//add code to deal with index 0 (will have to realloc)
 	    new->value[i] += overflow_vals[i+1];
+	    printf("hi\n");
 	}
 
 	if(overflow_vals[0] != 0){
+	    printf("overflow\n");
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    for(int i = new->size - 1; i > 0; i--){

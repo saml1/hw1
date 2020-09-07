@@ -310,6 +310,15 @@ void testLshift(TestObjs *objs){
     ASSERT(0xfffffffffffffffe == apint_get_bits(result, 1));
     ASSERT(0x1 == apint_get_bits(result, 0));
     apint_destroy(result);
+    
+    result = apint_lshift(objs->randbig1);
+    printf("%lX\n", apint_get_bits(result, 0));
+    printf("%lX\n", apint_get_bits(result, 1));
+    ASSERT(0x16836a798c3a109c == apint_get_bits(result, 0));
+    ASSERT(0x12063e94 == apint_get_bits(result, 1));
+    apint_destroy(result);
+    
+    
 }
 
 void testCreateFromHex(TestObjs *objs){
