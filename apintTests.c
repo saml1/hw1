@@ -313,6 +313,7 @@ void testSub(TestObjs *objs) {
 
 	/* subtracting 1 from 1 is 0 */
 	diff = apint_sub(objs->ap1, objs->ap1);
+	
 	ASSERT(0 == strcmp("0", (s = apint_format_as_hex(diff))));
 	ASSERT(0 == apint_compare(diff, objs->ap0));
 	apint_destroy(diff);
@@ -325,6 +326,12 @@ void testSub(TestObjs *objs) {
 	a = apint_create_from_hex("7e35207519b6b06429378631ca460905c19537644f31dc50114e9dc90bb4e4ebc43cfebe6b86d");
 	b = apint_create_from_hex("9fa0fb165441ade7cb8b17c3ab3653465e09e8078e09631ec8f6fe3a5b301dc");
 	diff = apint_sub(a, b);
+	printf("%lX\n", apint_get_bits(diff, 0));
+	printf("%lX\n", apint_get_bits(diff, 1));
+	printf("%lX\n", apint_get_bits(diff, 2));
+	printf("%lX\n", apint_get_bits(diff, 3));
+	printf("%lX\n", apint_get_bits(diff, 4));
+	printf("%lX\n", apint_get_bits(diff, 5));
 	ASSERT(0 == strcmp("7e35207519b6afc4883c6fdd8898213a367d73b918de95f20766963b0251c622cd3ec4633b691",
 		(s = apint_format_as_hex(diff))));
 	apint_destroy(diff);
