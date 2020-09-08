@@ -90,7 +90,7 @@ uint64_t apint_get_bits(ApInt *ap, unsigned n) {
 	/* TODO: implement */
 	//assert(0);
 	//return 0UL;
-	if(n > ap->size - 1){
+	if(n > (unsigned) ap->size - 1){
 	    return 0UL;
 	}
     return ap->value[n];
@@ -123,6 +123,7 @@ ApInt *apint_lshift(ApInt *ap) {
 	
 	for(int i = ap->size - 1; i >= 0; i--){//going from lowest to highest index
 	    overflow_vals[i] = ap->value[i] >> 63;//this is what needs to be added to the next index
+	    //printf("overflow val: %lX\n", overflow_vals[i]);
 	    new->value[i] = ap->value[i] << 1;//may lose bits to overflow but was recorded in overflow_vals
 	}
 	
@@ -134,16 +135,19 @@ ApInt *apint_lshift(ApInt *ap) {
 	for(int i = 0; i < ap->size -1; i++){
 	    new->value[i] += overflow_vals[i+1];
 	}
+	
 
 	if(overflow_vals[0] != 0){
-	    printf("overflow\n");
+	    //printf("overflow\n");
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    for(int i = new->size - 1; i > 0; i--){
-	        new->value[i] = new->value[i-1];
+	        //new->value[i] = new->value[i-1];
+	        new->value[i] = overflow_vals[i-1];
 	    }
-	    //for(int i = 0; i < 
-	    new->value[0] = overflow_vals[0];
+	    
+	    //new->value[0] = overflow_vals[0];
+	    //new->value[new->size -1] = overflow_vals[0];
 	}
 	
 	free(overflow_vals);
