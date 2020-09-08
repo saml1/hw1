@@ -182,6 +182,17 @@ void testLshiftN(TestObjs *objs) {
     ASSERT(0x12063e94 == apint_get_bits(result, 1));
     apint_destroy(result);
     
+    result = apint_lshift_n(objs->rubyrand1, 1);
+    printf("%lX\n", apint_get_bits(result, 0));
+    printf("%lX\n", apint_get_bits(result, 1));
+    printf("%lX\n", apint_get_bits(result, 2));
+    printf("%lX\n", apint_get_bits(result, 3));
+    printf("%lX\n", apint_get_bits(result, 4));
+    printf("%lX\n", apint_get_bits(result, 5));
+    //printf("%lX\n", apint_get_bits(result, 6));
+    //printf("%d\n", result->size);
+    apint_destroy(result);
+    
 }
 
 void testCompare(TestObjs *objs) {
