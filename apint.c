@@ -226,9 +226,42 @@ char *apint_format_as_hex(ApInt *ap) {
 }
 
 ApInt *apint_add(const ApInt *a, const ApInt *b) {
-	/* TODO: implement */
-	//assert(0);
-	return NULL;
+	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
+	int smallest_size = 0;
+	
+	if(a->size > b->size){
+	    new->size = a->size;
+	    smallest_size = b->size;
+	}else{
+	    new->size = b->size;
+	    smallest_size = a->size;
+	}
+	new->value = (uint64_t *) malloc(sizeof(uint64_t) * new->size);
+	for(int i = 0; i < new->size; i++){
+	    new->value[i] = 0;
+	}
+	
+	for(int i = 0; i < smallest_size; i++){//only adding bits that exist for a and b
+	    uint64_t temp = a->value[i] + b->value[i];
+	    if(temp < a->value[i] || temp < b->value[i]){//overflow
+	        printf("overflow\n");
+	        new->value[i] += temp;
+	        if(i < new->size-1){
+	            new->value[i+1] += 1;
+	        }else{
+	            new->size += 1;
+	            new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+	            new->value[i+1] = 1;
+	        }
+	    }else{
+	        new->value[i] += temp;
+	    }
+	}
+	
+	for(int i = smallest_size; i < new->size; i++){
+	    //fix to add up the bits only available on 1 apint
+	}
+	return new;
 }
 
 
