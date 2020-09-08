@@ -249,6 +249,7 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	        if(i < new->size-1){
 	            new->value[i+1] += 1;
 	        }else{
+	            printf("realloc");
 	            new->size += 1;
 	            new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	            new->value[i+1] = 1;
@@ -257,9 +258,15 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	        new->value[i] += temp;
 	    }
 	}
-	
-	for(int i = smallest_size; i < new->size; i++){
-	    //fix to add up the bits only available on 1 apint
+	if(a->size != b->size){
+	    for(int i = smallest_size; i < new->size; i++){
+	     //fix to add up the bits only available on 1 apint
+	     if(a->size > b->size){
+	          new->value[i] = a->value[i];
+	       }else{
+	           new->value[i] = b->value[i];
+	       }
+	    }
 	}
 	return new;
 }

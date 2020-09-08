@@ -37,6 +37,8 @@ typedef struct {
 	ApInt *randbig2;
 	ApInt *rubyrand1;
 	ApInt *rubyrand2;
+	ApInt *rubyrandadd1;
+	ApInt *rubyrandadd2;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -100,6 +102,8 @@ TestObjs *setup(void) {
 	objs->randbig2 = apint_create_from_hex("624aab9dc8ef44f0574833f57a606dd17dd7d8d2ae61debb8b08\0");
 	objs->rubyrand1 = apint_create_from_hex("c8e0ef88dac5dafde8ed537c1ca7e95604e6724362e349721061cb1cdb816cc0b72d0fb0ea690d9c90b91d71");
 	objs->rubyrand2 = apint_create_from_hex("569dd3f8a1faab4e675d07b0c64845adb9366b2333d66b06315b4d1a4a98860d3453729cebd656a197c2b");
+	objs->rubyrandadd1 = apint_create_from_hex("4bf3df6e55a432d43e4d73ba6f19");
+	objs->rubyrandadd2 = apint_create_from_hex("152f2cba4b48004891cdd520d8b42a52c0d43");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -125,6 +129,8 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->randbig2);
 	apint_destroy(objs->rubyrand1);
 	apint_destroy(objs->rubyrand2);
+	apint_destroy(objs->rubyrandadd1);
+	apint_destroy(objs->rubyrandadd2);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -273,8 +279,17 @@ void testAdd(TestObjs *objs) {
 
 	/* FFFFFFFFFFFFFFFF + 1 = 10000000000000000 */
 	sum = apint_add(objs->max1, objs->ap1);
-	printf("sum: %d\n", sum->value[1]);
+	//printf("sum: %d\n", sum->value[1]);
 	ASSERT(0 == strcmp("10000000000000000", (s = apint_format_as_hex(sum))));
+	apint_destroy(sum);
+	free(s);
+	
+	sum = apint_add(objs->rubyrandadd1, objs->rubyrandadd2);
+	printf("sum: %lX\n", sum->value[0]);
+	printf("sum: %lX\n", sum->value[1]);
+	printf("sum: %lX\n", sum->value[2]);
+	printf("size: %d\n", sum->size);
+	ASSERT(0 == strcmp("152f2cba50073e3f7728184e1c99018e67c5c", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
 }
