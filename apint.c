@@ -90,6 +90,9 @@ uint64_t apint_get_bits(ApInt *ap, unsigned n) {
 	/* TODO: implement */
 	//assert(0);
 	//return 0UL;
+	if(n > ap->size - 1){
+	    return 0UL;
+	}
     return ap->value[n];
 }
 
