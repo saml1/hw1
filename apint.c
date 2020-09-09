@@ -2,6 +2,9 @@
  * CSF Assignment 1
  * Arbitrary-precision integer data type
  * Function implementations
+ * CSF Assignment 1
+ * Sam Lipschitz
+ * slipsch3@jhu.edu
  */
 
 #include <stdlib.h>
@@ -10,6 +13,15 @@
 #include "apint.h"
 #include <math.h>
 
+/*
+ * Creates an ApInt with a value specified by a uint64_t
+ *
+ * Parameters:
+ *  val - uint64_t that specifies the value of the ApInt
+ *
+ * Returns:
+ *  a pointer to the newly created ApInt
+ */
 ApInt *apint_create_from_u64(uint64_t val) {
     ApInt * new = (ApInt *) malloc(sizeof(ApInt));
     new->size = 1;
@@ -18,6 +30,15 @@ ApInt *apint_create_from_u64(uint64_t val) {
 	return new;
 }
 
+/*
+ * Creates an ApInt with a value specified by a char pointer
+ *
+ * Parameters:
+ *  hex - char* that specifies the value of the ApInt
+ *
+ * Returns:
+ *  a pointer to the newly created ApInt
+ */
 ApInt *apint_create_from_hex(const char *hex) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
     int digits = 0;
@@ -58,12 +79,27 @@ ApInt *apint_create_from_hex(const char *hex) {
     }
 	return new;
 }
-
+/*
+ * Deallocates an ApInt
+ *
+ * Parameters:
+ *  ap - the ApInt to be destroyed
+ */
 void apint_destroy(ApInt *ap) {
     free(ap->value);
     free(ap);
 }
 
+/*
+ * Returns 64 bits of the binary representation of an ApInt
+ *
+ * Parameters:
+ *  ap - the ApInt being used
+ *  n- specifier of which 64 bits to be returned
+ *
+ * Returns:
+ *  uint64_t value containing 64 bits of the binary representation of ap
+ */
 uint64_t apint_get_bits(ApInt *ap, unsigned n) {
 	if(n > (unsigned) ap->size - 1){
 	    return 0UL;
@@ -71,6 +107,15 @@ uint64_t apint_get_bits(ApInt *ap, unsigned n) {
     return ap->value[n];
 }
 
+/*
+ * Returns the position of the most significant bit set to 1 in representation of the ApInt pointed to by ap
+ *
+ * Parameters:
+ *  ap - ApInt being used
+ *
+ * Returns:
+ *  int representing the position of the most significant bit set to 1 in ap
+ */
 int apint_highest_bit_set(ApInt *ap) {
 	if(ap->size == 1 && ap->value[0] == 0){//special case
 	    return -1;
@@ -85,6 +130,15 @@ int apint_highest_bit_set(ApInt *ap) {
 	return temp + 64*(ap->size -1);
 }
 
+/*
+ * Returns a pointer to an ApInt formed by shifting each bit of an ApInt by 1 bit position to the left.
+ *
+ * Parameters:
+ *  ap - ApInt being used
+ *
+ * Returns:
+ *  ApInt representing the value of ap shifted left by 1 bit
+ */
 ApInt *apint_lshift(ApInt *ap) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	new->size = ap->size;
@@ -111,6 +165,16 @@ ApInt *apint_lshift(ApInt *ap) {
 	return new;
 }
 
+/*
+ * Returns a pointer to an ApInt formed by shifting each bit of an ApInt by n bit positions to the left.
+ *
+ * Parameters:
+ *  ap - ApInt being used
+ *  n - the amount of bits to be left shifted
+ *
+ * Returns:
+ *  ApInt representing the value of ap shifted left by n bits
+ */
 ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	new->size = ap->size;
@@ -122,7 +186,7 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	    new->value[i] = ap->value[i] << n;//may lose bits to overflow but was recorded in overflow_vals
 	}
 
-	for(int i = ap->size -1; i >0; i--){
+	for(int i = ap->size -1; i >0; i--){//adding overflow value to next bit
 	    new->value[i] += overflow_vals[i-1];
 	}
 
@@ -143,6 +207,15 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	return new;
 }
 
+/*
+ * Returns a pointer to a dynamically-allocated C char string containing the hexadecimal representation of an ApInt 
+ *
+ * Parameters:
+ *  ap - ApInt being used
+ *
+ * Returns:
+ *  char* representing the value of ap in hex format
+ */
 char *apint_format_as_hex(ApInt *ap) {
 	if(ap->size == 1 && ap->value[0] == 0){
 	    char * s = (char *) malloc(sizeof(char) * 2);
@@ -180,6 +253,16 @@ char *apint_format_as_hex(ApInt *ap) {
 	return s;
 }
 
+/*
+ * Returns ApInt representing the sum of 2 ApInt instances
+ *
+ * Parameters:
+ *  a - first ApInt to be added
+ *  b - second ApInt to be added
+ *
+ * Returns:
+ *  ApInt representing the sum of ApInts a and b
+ */
 ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	int smallest_size = 0;
@@ -199,12 +282,10 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	for(int i = 0; i < smallest_size; i++){//only adding bits that exist for a and b
 	    uint64_t temp = a->value[i] + b->value[i];
 	    if(temp < a->value[i] || temp < b->value[i]){//overflow
-	        //printf("overflow\n");
 	        new->value[i] += temp;
 	        if(i < new->size-1){
 	            new->value[i+1] += 1;
 	        }else{
-	            //printf("realloc");
 	            new->size += 1;
 	            new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	            new->value[i+1] = 1;
@@ -215,7 +296,6 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	}
 	if(a->size != b->size){
 	    for(int i = smallest_size; i < new->size; i++){
-	     //fix to add up the bits only available on 1 apint
 	     if(a->size > b->size){
 	          new->value[i] = a->value[i];
 	       }else{
@@ -226,10 +306,18 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	return new;
 }
 
-
+/*
+ * Returns ApInt representing difference between the values of 2 ApInt instances
+ *
+ * Parameters:
+ *  a - ApInt
+ *  b - ApInt to be subtracted from a
+ *
+ * Returns:
+ *  ApInt representing value of a minus b
+ *  Returns NULL if b > a
+ */
 ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
-	/* TODO: implement */
-	//assert(0);
 	if(apint_compare(a,b) < 0){//if b is greater than a
 	    return NULL;
 	}else if(apint_compare(a,b) == 0){
@@ -245,25 +333,32 @@ ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
 	        if(a->value[i] > b->value[i]){//simple math
 	            new->value[i] -= b->value[i];
 	        }else{//more complicated
-	            //printf("complicated\n");
 	            new->value[i+1] -= 1;
 	            new->value[i] = 0xFFFFFFFFFFFFFFFF - b->value[i] + a->value[i]+1;
 	        }
 	    }
 	    return new;
 	}
-	//return
 }
 
+/*
+ * Compares the values of 2 ApInt instances
+ *
+ * Parameters:
+ *  left - ApInt to be compared
+ *  right - ApInt to be compared
+ *
+ * Returns:
+ *  Negative value if left < right
+ *  Positive value if left > right
+ *  0 if left = right
+ */
 int apint_compare(const ApInt *left, const ApInt *right) {
-	/* TODO: implement */
-	//assert(0);
 	if(left->size > right-> size){
 	    return 1;
 	}else if(left->size < right->size){
 	    return -1;
-	}else{
-	    //ASSERT(left-> size == right->size);
+	}else{;
 	    for(int i = left->size - 1; i >= 0; i--){
 	        if(left->value[i] > right->value[i]){
 	            return 1;

@@ -1,14 +1,8 @@
 /*
  * Unit tests for arbitrary-precision integer data type
- *
- * These tests are by no means comprehensive.  You will need to
- * add more tests of your own!  In particular, make sure that
- * you have tests for more challenging situations, such as
- *
- * - large values
- * - adding/subtracting/comparing values with different lengths
- * - special cases (carries when adding, borrows when subtracting, etc.)
- * - etc.
+ * CSF Assignment 1
+ * Sam Lipschitz
+ * slipsch3@jhu.edu
  */
 
 #include <stdio.h>
@@ -40,7 +34,6 @@ typedef struct {
 	ApInt *rubyrandadd1;
 	ApInt *rubyrandadd2;
 	ApInt *realloctest;
-	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
 TestObjs *setup(void);
@@ -55,8 +48,10 @@ void testAdd(TestObjs *objs);
 void testSub(TestObjs *objs);
 void testCreateFromHex(TestObjs *objs);
 void testLshift(TestObjs *objs);
-/* TODO: add more test function prototypes */
 
+/*
+ * Main test funciton
+ */
 int main(int argc, char **argv) {
 	TEST_INIT();
 
@@ -77,11 +72,13 @@ int main(int argc, char **argv) {
 	TEST(testSub);
 	TEST(testCreateFromHex);
 	TEST(testLshift);
-	/* TODO: use TEST macro to execute more test functions */
 
 	TEST_FINI();
 }
 
+/*
+ * Initializes the ApInts being used in the tests
+ */
 TestObjs *setup(void) {
 	TestObjs *objs = malloc(sizeof(TestObjs));
 	objs->ap0 = apint_create_from_u64(0UL);
@@ -106,11 +103,13 @@ TestObjs *setup(void) {
 	objs->rubyrandadd1 = apint_create_from_hex("4bf3df6e55a432d43e4d73ba6f19");
 	objs->rubyrandadd2 = apint_create_from_hex("152f2cba4b48004891cdd520d8b42a52c0d43");
 	objs->realloctest = apint_create_from_hex("781937590aaaaaaaaa1908765432167");
-	/* TODO: initialize additional members of test fixture */
 
 	return objs;
 }
 
+/*
+ * Frees all the ApInts that were initialized in setup
+ */
 void cleanup(TestObjs *objs) {
 	apint_destroy(objs->ap0);
 	apint_destroy(objs->ap1);
@@ -134,7 +133,6 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->rubyrandadd1);
 	apint_destroy(objs->rubyrandadd2);
 	apint_destroy(objs->realloctest);
-	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
 }
@@ -303,10 +301,10 @@ void testAdd(TestObjs *objs) {
 	free(s);
 	
 	sum = apint_add(objs->rubyrandadd1, objs->rubyrandadd2);
-	printf("sum: %lX\n", sum->value[0]);
+	/*printf("sum: %lX\n", sum->value[0]);
 	printf("sum: %lX\n", sum->value[1]);
 	printf("sum: %lX\n", sum->value[2]);
-	printf("size: %d\n", sum->size);
+	printf("size: %d\n", sum->size);*/
 	ASSERT(0 == strcmp("152f2cba50073e3f7728184e1c99018e67c5c", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
@@ -344,12 +342,12 @@ void testSub(TestObjs *objs) {
 	a = apint_create_from_hex("7e35207519b6b06429378631ca460905c19537644f31dc50114e9dc90bb4e4ebc43cfebe6b86d");
 	b = apint_create_from_hex("9fa0fb165441ade7cb8b17c3ab3653465e09e8078e09631ec8f6fe3a5b301dc");
 	diff = apint_sub(a, b);
-	printf("%lX\n", apint_get_bits(diff, 0));
+	/*printf("%lX\n", apint_get_bits(diff, 0));
 	printf("%lX\n", apint_get_bits(diff, 1));
 	printf("%lX\n", apint_get_bits(diff, 2));
 	printf("%lX\n", apint_get_bits(diff, 3));
 	printf("%lX\n", apint_get_bits(diff, 4));
-	printf("%lX\n", apint_get_bits(diff, 5));
+	printf("%lX\n", apint_get_bits(diff, 5));*/
 	ASSERT(0 == strcmp("7e35207519b6afc4883c6fdd8898213a367d73b918de95f20766963b0251c622cd3ec4633b691",
 		(s = apint_format_as_hex(diff))));
 	apint_destroy(diff);
