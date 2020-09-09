@@ -11,13 +11,10 @@
 #include <math.h>
 
 ApInt *apint_create_from_u64(uint64_t val) {
-	/* TODO: implement */
     ApInt * new = (ApInt *) malloc(sizeof(ApInt));
     new->size = 1;
-    //new -> value = (uint64_t *) malloc(sizeof(new->size));
     new -> value = (uint64_t *) malloc(sizeof(uint64_t));
     new->value[0] = val;
-	//assert(0);
 	return new;
 }
 
@@ -28,7 +25,6 @@ ApInt *apint_create_from_hex(const char *hex) {
     while(hex[digits] != '\0'){
         digits++;
     }
-    //printf("digits: %d\n", digits);
     //finding how many uint64_ts are needed
     int uint_total = 0;
     if(digits % 16 == 0){
@@ -36,17 +32,15 @@ ApInt *apint_create_from_hex(const char *hex) {
     }else{
         uint_total = (digits / 16) + 1;
     }
-    //printf("uint_total: %d\n", uint_total);
+    
     new->size = (uint64_t) uint_total;
     new->value = (uint64_t *) malloc(sizeof(uint64_t) * uint_total);
 
     //iterating from least to most significant digit
     for(int i = 0; i < uint_total; i++){
-        //printf("%d\n", i);
         uint64_t val = 0;
         for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
             uint64_t temp;
-            //printf("j: %d\n", j);
             if(hex[j] >= 48 && hex[j] <= 57){//char is 0-9
                 temp = hex[j] - 48;
             }else if(hex[j] >= 65 && hex[j] <= 70){//char is A-F
@@ -54,42 +48,23 @@ ApInt *apint_create_from_hex(const char *hex) {
             }else if(hex[j] >= 97 && hex[j] <= 102){//char is a-f
                 temp = 10 + hex[j] - 97;
             }
-            //printf("temp: %d\n", temp);
             val += temp * (uint64_t) pow(16,digits - j-1-i*16);
-            //printf("val: %lX\n", val);
-            /*printf("16 pow: %lu\n", digits - j - 1);
-            printf("temp: %lu\n", temp);
-            printf("val in inner for loop: %lu\n", val);
-            printf("\n");*/
-            //printf("temp*pow: %f\n", (uint64_t) temp * pow(16, digits - j-1-i*16));
-            // printf("temp*pow: %d\n", temp*pow(16, digits - j-1));
-            //printf("temp: %d\n", temp);
-            //printf("val: %lu\n", val);
             if(j == 0){//reached most significant bit
                 new->value[i] = val;
                 break;
             }
         }
-        //printf("val:%lX\n", val);
         new->value[i] = val;
     }
-	//assert(0);
 	return new;
 }
 
 void apint_destroy(ApInt *ap) {
-	/* TODO: implement */
-    //for(int i = 0; i < ap->size; i++){
-        free(ap->value);
-    //}
+    free(ap->value);
     free(ap);
-	//assert(0);
 }
 
 uint64_t apint_get_bits(ApInt *ap, unsigned n) {
-	/* TODO: implement */
-	//assert(0);
-	//return 0UL;
 	if(n > (unsigned) ap->size - 1){
 	    return 0UL;
 	}
@@ -97,8 +72,6 @@ uint64_t apint_get_bits(ApInt *ap, unsigned n) {
 }
 
 int apint_highest_bit_set(ApInt *ap) {
-	/* TODO: implement */
-	//assert(0);
 	if(ap->size == 1 && ap->value[0] == 0){//special case
 	    return -1;
 	}
@@ -109,7 +82,6 @@ int apint_highest_bit_set(ApInt *ap) {
 	        temp = i;
 	    }
 	}
-	//printf("returning: %d\n", temp + 1 + 64*(ap->size -1));
 	return temp + 64*(ap->size -1);
 }
 
@@ -128,7 +100,6 @@ ApInt *apint_lshift(ApInt *ap) {
 	for(int i = ap->size -1; i >0; i--){
 	    new->value[i] += overflow_vals[i-1];
 	}
-	
 
 	if(overflow_vals[0] != 0){
 	    new->size += 1;
@@ -155,56 +126,42 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	    new->value[i] += overflow_vals[i-1];
 	}
 
-	/*if(overflow_vals[new->size-1] != 0){original
-	    new->size += 1;
-	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-	    new->value[new->size-1] = overflow_vals[new->size-2];
-	}*/
-	
-	if(overflow_vals[0] != 0){
-	    //printf("overflow\n");
+	if(overflow_vals[new->size-1] != 0){//bad
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    new->value[new->size-1] = overflow_vals[new->size-2];
 	}
+	
+	/*if(overflow_vals[0] != 0){//what ive been using
+	    //printf("overflow\n");
+	    new->size += 1;
+	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+	    new->value[new->size-1] = overflow_vals[new->size-2];
+	}*/
 	
 	free(overflow_vals);
 	return new;
 }
 
 char *apint_format_as_hex(ApInt *ap) {
-	/* TODO: implement */
-	//assert(0);
 	if(ap->size == 1 && ap->value[0] == 0){
-	    //s = "0";
-	    //printf("ok\n");
 	    char * s = (char *) malloc(sizeof(char) * 2);
 	    s[0] = '0';
 	    s[1] = '\0';
-	    //s = "0";
 	    return s;
 	}
-	//printf("here\n");
 	char * s = (char *) malloc(sizeof(char) * 2);
 	int string_size = 0;
 	for(int i = ap->size - 1; i >= 0; i--){//looping through each value element
 	    uint64_t curr_val = ap->value[i];
 	    uint64_t temp = 0;
-	    //printf("curr_val: %lX\n", curr_val);
 	    for(int j = 15; j >= 0; j--){
 	        if(curr_val >= pow(16, j)){
-	            //printf("Here, j= %d\n", j);
-	            /*if(curr_val % (uint64_t) pow(16, j) != 0){
-	                temp = curr_val / (pow(16,j));
-	            }*/
 	            temp = curr_val / (uint64_t) (pow(16,j));//this is the "number" hex value (0-15)
 	            if(temp == 16){
-	                //printf("temp's 16\n");
 	                temp -= 1;
 	            }
-	            //printf("temp: %d\n", temp);//problem is dealing with a 0- fix
 	            curr_val -= temp * (uint64_t) pow(16, j);
-	            //printf("curr_val inside inner loop: %lX\n", curr_val);
 	            string_size ++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
 	            if(temp < 10){
@@ -216,19 +173,10 @@ char *apint_format_as_hex(ApInt *ap) {
 	            string_size++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
 	            s[string_size-1] = '0';
-	            //printf("ok\n");
 	        }
 	    }	   
 	}
-	//printf("%d\n", string_size);
-	/*if(ap->size == 1 && ap->value[0] == 0){
-	    s = "0";
-	    printf("ok\n");
-	}*/
-	//printf("s: %s\n", s);
-	//printf("size: %d\n", string_size);
 	s[string_size] = '\0';
-	//printf("s: %s\n", s);
 	return s;
 }
 

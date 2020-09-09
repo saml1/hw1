@@ -206,6 +206,12 @@ void testLshiftN(TestObjs *objs) {
     ASSERT(0x843B2A190B380000 == apint_get_bits(result, 0));
     ASSERT(0x9BAC85555555550C == apint_get_bits(result, 1));
     ASSERT(0x3c0c == apint_get_bits(result, 2));
+    ASSERT(0x0 == apint_get_bits(result, 3));
+    //printf(apint_format_as_hex(result));
+    //ASSERT(0 == strcmp("3c0c9bac85555555550c843b2a190b380000", (s=apint_format_as_hex(result))));
+    char *s;
+    ASSERT(0 == strcmp("3c0c9bac85555555550c843b2a190b380000", (s = apint_format_as_hex(result))));
+    free(s);
     /*printf("%lX\n", apint_get_bits(result, 0));
     printf("%lX\n", apint_get_bits(result, 1));
     printf("%lX\n", apint_get_bits(result, 2));
