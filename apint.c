@@ -155,7 +155,14 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	    new->value[i] += overflow_vals[i-1];
 	}
 
-	if(overflow_vals[new->size-1] != 0){
+	/*if(overflow_vals[new->size-1] != 0){original
+	    new->size += 1;
+	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+	    new->value[new->size-1] = overflow_vals[new->size-2];
+	}*/
+	
+	if(overflow_vals[0] != 0){
+	    //printf("overflow\n");
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    new->value[new->size-1] = overflow_vals[new->size-2];
@@ -290,7 +297,7 @@ ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
 	        if(a->value[i] > b->value[i]){//simple math
 	            new->value[i] -= b->value[i];
 	        }else{//more complicated
-	            printf("complicated\n");
+	            //printf("complicated\n");
 	            new->value[i+1] -= 1;
 	            new->value[i] = 0xFFFFFFFFFFFFFFFF - b->value[i] + a->value[i]+1;
 	        }

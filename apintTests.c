@@ -39,6 +39,7 @@ typedef struct {
 	ApInt *rubyrand2;
 	ApInt *rubyrandadd1;
 	ApInt *rubyrandadd2;
+	ApInt *realloctest;
 	/* TODO: add additional fields of test fixture */
 } TestObjs;
 
@@ -104,6 +105,7 @@ TestObjs *setup(void) {
 	objs->rubyrand2 = apint_create_from_hex("569dd3f8a1faab4e675d07b0c64845adb9366b2333d66b06315b4d1a4a98860d3453729cebd656a197c2b");
 	objs->rubyrandadd1 = apint_create_from_hex("4bf3df6e55a432d43e4d73ba6f19");
 	objs->rubyrandadd2 = apint_create_from_hex("152f2cba4b48004891cdd520d8b42a52c0d43");
+	objs->realloctest = apint_create_from_hex("781937590aaaaaaaaa1908765432167");
 	/* TODO: initialize additional members of test fixture */
 
 	return objs;
@@ -131,6 +133,7 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->rubyrand2);
 	apint_destroy(objs->rubyrandadd1);
 	apint_destroy(objs->rubyrandadd2);
+	apint_destroy(objs->realloctest);
 	/* TODO: destroy additional members of test fixture */
 
 	free(objs);
@@ -189,16 +192,25 @@ void testLshiftN(TestObjs *objs) {
     apint_destroy(result);
     
     result = apint_lshift_n(objs->rubyrand1, 1);
-    printf("%lX\n", apint_get_bits(result, 0));
+    /*printf("%lX\n", apint_get_bits(result, 0));
     printf("%lX\n", apint_get_bits(result, 1));
     printf("%lX\n", apint_get_bits(result, 2));
     printf("%lX\n", apint_get_bits(result, 3));
     printf("%lX\n", apint_get_bits(result, 4));
-    printf("%lX\n", apint_get_bits(result, 5));
+    printf("%lX\n", apint_get_bits(result, 5));*/
     //printf("%lX\n", apint_get_bits(result, 6));
     //printf("%d\n", result->size);
     apint_destroy(result);
     
+    result = apint_lshift_n(objs->realloctest, 19);
+    ASSERT(0x843B2A190B380000 == apint_get_bits(result, 0));
+    ASSERT(0x9BAC85555555550C == apint_get_bits(result, 1));
+    ASSERT(0x3c0c == apint_get_bits(result, 2));
+    /*printf("%lX\n", apint_get_bits(result, 0));
+    printf("%lX\n", apint_get_bits(result, 1));
+    printf("%lX\n", apint_get_bits(result, 2));
+    printf("%lX\n", apint_get_bits(result, 3));*/
+    apint_destroy(result);
 }
 
 void testCompare(TestObjs *objs) {
