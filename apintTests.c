@@ -34,6 +34,15 @@ typedef struct {
 	ApInt *rubyrandadd1;
 	ApInt *rubyrandadd2;
 	ApInt *realloctest;
+	ApInt *carrysub1;
+	ApInt *carrysub2;
+    ApInt *carrysub3;
+    ApInt *rubyrand3;
+    ApInt *rubyrand4;
+    ApInt *ap4;
+    ApInt *ap5;
+    ApInt *rubyrand5;
+    ApInt *rubyrand6;
 } TestObjs;
 
 TestObjs *setup(void);
@@ -103,6 +112,15 @@ TestObjs *setup(void) {
 	objs->rubyrandadd1 = apint_create_from_hex("4bf3df6e55a432d43e4d73ba6f19");
 	objs->rubyrandadd2 = apint_create_from_hex("152f2cba4b48004891cdd520d8b42a52c0d43");
 	objs->realloctest = apint_create_from_hex("781937590aaaaaaaaa1908765432167");
+    objs->carrysub1 = apint_create_from_hex("10000000000000000");
+    objs->carrysub2 = apint_create_from_hex("1");
+    objs->carrysub3 = apint_create_from_hex("110000000000000000");
+    objs->rubyrand3 = apint_create_from_hex("58230c28fbd4c50f93b21f942c23637f8121d7b6ae1afe5716234b29886014ec22ad0bad9d57ba3920833");
+    objs->rubyrand4 = apint_create_from_hex("d7b02778deac873bd50e8ac1c7bba3adfe9dd8198744a7cf3b882b31ecd842a8");
+    objs->ap4 = apint_create_from_hex("4");
+    objs->ap5 = apint_create_from_hex("5");
+    objs->rubyrand5 = apint_create_from_hex("28a8227cbf513df0858be38eceb7c688485b16d218b48ede8b6a19942c6b51ddbf21da14f09063a790e602cdb0fd5f13e107");
+    objs->rubyrand6 = apint_create_from_hex("1846b3df0cb2ccddf199d8a93f7f0675a8f27f61605e437636dfb0ea003b43a3b54dc10e06b3cfe5d370");
 
 	return objs;
 }
@@ -133,6 +151,15 @@ void cleanup(TestObjs *objs) {
 	apint_destroy(objs->rubyrandadd1);
 	apint_destroy(objs->rubyrandadd2);
 	apint_destroy(objs->realloctest);
+    apint_destroy(objs->carrysub2);
+    apint_destroy(objs->carrysub1);
+    apint_destroy(objs->carrysub3);
+    apint_destroy(objs->rubyrand3);
+    apint_destroy(objs->rubyrand4);
+    apint_destroy(objs->ap4);
+    apint_destroy(objs->ap5);
+    apint_destroy(objs->rubyrand5);
+    apint_destroy(objs->rubyrand6);
 
 	free(objs);
 }
@@ -215,6 +242,16 @@ void testLshiftN(TestObjs *objs) {
     printf("%lX\n", apint_get_bits(result, 2));
     printf("%lX\n", apint_get_bits(result, 3));*/
     apint_destroy(result);
+
+    /*result = apint_lshift_n(objs->randbig1, 60);
+    printf("%s\n", apint_format_as_hex(result));
+    printf("size: %d\n", result->size);
+    ASSERT(0xe000000000000000 == apint_get_bits(result, 0));
+    ASSERT(0xa0b41b53cc61d084 == apint_get_bits(result, 1));
+    ASSERT(0x9031f4 == apint_get_bits(result, 2));
+    //ASSERT(0UL == apint_get_bits(result, 1));
+    free(s);
+    apint_destroy(result);*/
 }
 
 void testCompare(TestObjs *objs) {
@@ -308,6 +345,32 @@ void testAdd(TestObjs *objs) {
 	ASSERT(0 == strcmp("152f2cba50073e3f7728184e1c99018e67c5c", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
+
+    sum = apint_add(objs->carrysub1, objs->carrysub2);
+    //printf("sum: %lX\n", sum->value[0]);
+    //printf("sum: %lX\n", sum->value[1]);
+    ASSERT(0 == strcmp("10000000000000001", (s = apint_format_as_hex(sum))));
+    apint_destroy(sum);
+    free(s);
+
+    sum = apint_add(objs->max1, objs->max1);
+    //printf("sum: %d\n", sum->value[1]);
+    ASSERT(0 == strcmp("1fffffffffffffffe", (s = apint_format_as_hex(sum))));
+    //printf("size: %d\n", sum->size);
+    //printf("sum: %lX\n", sum->value[0]);
+    //printf("sum: %lX\n", sum->value[1]);
+    apint_destroy(sum);
+    free(s);
+
+    sum = apint_add(objs->ap4, objs->ap5);
+    ASSERT(0 == strcmp("9", (s = apint_format_as_hex(sum))));
+    apint_destroy(sum);
+    free(s);
+
+    sum = apint_add(objs->rubyrand5, objs->rubyrand6);
+    ASSERT(0 == strcmp("28a8227cbf513df09dd2976ddb6a936639f4ef7b58339554345c98f58cc99553f6018afef0cba74b4633c3dbb7b12ef9b477", (s = apint_format_as_hex(sum))));
+    apint_destroy(sum);
+    free(s);
 }
 
 void testSub(TestObjs *objs) {
@@ -354,6 +417,29 @@ void testSub(TestObjs *objs) {
 	apint_destroy(b);
 	apint_destroy(a);
 	free(s);
+
+	diff = apint_sub(objs->carrysub1,objs->carrysub2);
+    /*printf("bit 0: %lX\n", apint_get_bits(diff, 0));
+    printf("bit 1: %lX\n", apint_get_bits(diff, 1));
+    printf("size: %d\n", diff->size);*/
+    ASSERT(0 == strcmp("ffffffffffffffff", (s = apint_format_as_hex(diff))));
+    apint_destroy(diff);
+    free(s);
+
+    diff = apint_sub(objs->carrysub3,objs->carrysub2);
+    //printf("bit 0: %lX\n", apint_get_bits(diff, 0));
+    //printf("bit 1: %lX\n", apint_get_bits(diff, 1));
+    //printf("size: %d\n", diff->size);
+    ASSERT(0 == strcmp("10ffffffffffffffff", (s = apint_format_as_hex(diff))));
+    apint_destroy(diff);
+    free(s);
+
+    diff = apint_sub(objs->rubyrand3, objs->rubyrand4);
+    //printf("%s\n", apint_format_as_hex(diff));
+    ASSERT(0 == strcmp("58230c28fbd4c50f93b2121929abd594b8ae1a65c56ee1db5be86b3faade7c77d83017f51aa49b6b9c58b", (s = apint_format_as_hex(diff))));
+    //ASSERT(0 == strcmp("58230c28fbd4c50f93b2121929abd594b8ae1a65c56ee1db5be87b3faade7c77d83017f51aa49b6b9c58b", (s = apint_format_as_hex(diff))));
+    apint_destroy(diff);
+    free(s);
 }
 
 void testLshift(TestObjs *objs){

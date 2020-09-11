@@ -61,7 +61,7 @@ ApInt *apint_create_from_hex(const char *hex) {
     for(int i = 0; i < uint_total; i++){
         uint64_t val = 0;
         for(int j = digits - 1- i*16; j > digits - 1 - i*16 - 16; j--){
-            uint64_t temp;
+            uint64_t temp = 0;
             if(hex[j] >= 48 && hex[j] <= 57){//char is 0-9
                 temp = hex[j] - 48;
             }else if(hex[j] >= 65 && hex[j] <= 70){//char is A-F
@@ -245,6 +245,7 @@ char *apint_format_as_hex(ApInt *ap) {
 	        }else if(string_size > 0){
 	            string_size++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
+	            //printf("here bro\n");
 	            s[string_size-1] = '0';
 	        }
 	    }	   
@@ -320,7 +321,7 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
 	if(apint_compare(a,b) < 0){//if b is greater than a
 	    return NULL;
-	}else if(apint_compare(a,b) == 0){
+	}else if(apint_compare(a,b) == 0){//if a = b
 	    return apint_create_from_u64(0UL);
 	}else{
 	    ApInt * new = (ApInt *) malloc(sizeof(ApInt));
@@ -334,7 +335,13 @@ ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
 	            new->value[i] -= b->value[i];
 	        }else{//more complicated
 	            new->value[i+1] -= 1;
-	            new->value[i] = 0xFFFFFFFFFFFFFFFF - b->value[i] + a->value[i]+1;
+	            if(new->value[i+1] == 0){
+                    //printf("here\n");
+	                new->size -= 1;
+	                new->value = (uint64_t*) realloc(new->value, sizeof(uint64_t) * new->size);
+	            }
+	            //new->value[i] = 0xFFFFFFFFFFFFFFFF - b->value[i] + a->value[i]+1;
+	            new->value[i] -= b->value[i];
 	        }
 	    }
 	    return new;
