@@ -179,8 +179,29 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	new->size = ap->size;
 	new->value = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);
-	uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);
-	
+
+
+	if(n >= 64 && n % 64 == 0){
+        new->size += n / 64;
+        new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+        /*for(int i = 0; i < new->size; i++){
+            new->value[i + n/64] = ap->value[i];
+        }*/
+        for(unsigned int i = new->size -1; i >= n/64; i--){
+            new->value[i] = ap->value[i-n/64];
+        }
+        /*for(int i = new->size - 1; i > 0; i--){
+            new->value[i] = new->value[i-1];
+        }*/
+        for(unsigned int i = 0; i < n / 64; i++){
+            new->value[i] = 0;
+            //printf("here\n");
+        }
+        return new;
+	}
+
+    uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);
+
 	for(int i = ap->size - 1; i >= 0; i--){//going from lowest to highest index
 	    overflow_vals[i] = ap->value[i] >> (64 - n);//this is what needs to be added to the next index
 	    new->value[i] = ap->value[i] << n;//may lose bits to overflow but was recorded in overflow_vals
@@ -194,6 +215,18 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    new->value[new->size-1] = overflow_vals[new->size-2];
+	}
+
+	if(n >= 64 && n % 64 != 0){//check if this should be >=64
+        new->size += n / 64;
+        new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+        for(int i = new->size - 1; i > 0; i--){
+            new->value[i] = new->value[i-1];
+        }
+        for(unsigned int i = 0; i < n / 64; i++){
+            new->value[i] = 0;
+            //printf("here\n");
+        }
 	}
 	
 	/*if(overflow_vals[0] != 0){//what ive been using
