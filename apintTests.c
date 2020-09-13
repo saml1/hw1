@@ -493,39 +493,42 @@ void testLshift(TestObjs *objs){
     apint_destroy(result);
     
     result = apint_lshift(objs->ap110660361);
-    //printf("%lX\n", apint_get_bits(result, 0));
     ASSERT(221320722UL == apint_get_bits(result, 0));
     apint_destroy(result);
     
     result = apint_lshift(objs->max1);
-    //printf("%lX\n", apint_get_bits(result, 0));
-    //printf("%lX\n", apint_get_bits(result, 1));
     ASSERT(0xfffffffffffffffe == apint_get_bits(result, 0));
     ASSERT(0x1 == apint_get_bits(result, 1));
     apint_destroy(result);
     
     result = apint_lshift(objs->randbig1);
-    //printf("%lX\n", apint_get_bits(result, 0));
-    //printf("%lX\n", apint_get_bits(result, 1));
     ASSERT(0x16836a798c3a109c == apint_get_bits(result, 0));
     ASSERT(0x12063e94 == apint_get_bits(result, 1));
     apint_destroy(result);
     
     result = apint_lshift(objs->randbig2);
-    /*printf("%lX\n", apint_get_bits(result, 0));
-    printf("%lX\n", apint_get_bits(result, 1));
-    printf("%lX\n", apint_get_bits(result, 2));
-    printf("%lX\n", apint_get_bits(result, 3));*/
-    //ASSERT(0x16836a798c3a109c == apint_get_bits(result, 0));
-    //ASSERT(0x12063e94 == apint_get_bits(result, 1));
+    printf("%llX\n", apint_get_bits(result, 0));
+    printf("%llX\n", apint_get_bits(result, 1));
+    printf("%llX\n", apint_get_bits(result, 2));
+    printf("%llX\n", apint_get_bits(result, 3));
+    printf("%llX\n", apint_get_bits(result, 4));
+    char * s;
+    s = apint_format_as_hex(result);
+    printf("%s\n", s);
+    printf("size: %d\n", result->size);
+    printf("randbig2 size: %d\n", objs->randbig2->size);
+    free(s);
+    ASSERT(0xb1a55cc3bd771610 == apint_get_bits(result, 0));
+    ASSERT(0x67eaf4c0dba2fbaf == apint_get_bits(result, 1));
+    ASSERT(0x573b91de89e0ae90 == apint_get_bits(result, 2));
+    ASSERT(0xc495 == apint_get_bits(result, 3));
+    ASSERT(0UL == apint_get_bits(result, 4));
     apint_destroy(result);
     
     
 }
 
 void testCreateFromHex(TestObjs *objs){
-    //uint64_t a = apint_get_bits(objs->easy, 0);
-    //printf("%d\n", &a);
     ASSERT(0x0 == apint_get_bits(objs->easy, 0));
     ASSERT(0x1 == apint_get_bits(objs->easy1, 0));
     ASSERT(0x11 == apint_get_bits(objs->ap11, 0));
@@ -544,11 +547,4 @@ void testCreateFromHex(TestObjs *objs){
     ASSERT(0x33f57a606dd17dd7 == apint_get_bits(objs->randbig2, 1));
     ASSERT(0xab9dc8ef44f05748 == apint_get_bits(objs->randbig2, 2));
     ASSERT(0x624a == apint_get_bits(objs->randbig2, 3));
-    //printf("yeet\n");
-    //printf("bit 0: %lX\n", apint_get_bits(objs->randbig1, 0));
-    //printf("bit 1: %lX\n", apint_get_bits(objs->randbig1, 1));
-    /*printf("%X\n", apint_get_bits(objs->apf17, 0));
-    printf("%lX", apint_get_bits(objs->apf17, 1));*/
 }
-
-/* TODO: add more test functions */

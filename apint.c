@@ -155,11 +155,17 @@ ApInt *apint_lshift(ApInt *ap) {
 	    new->value[i] += overflow_vals[i-1];
 	}
 
-	if(overflow_vals[0] != 0){
+	/*if(overflow_vals[0] != 0){
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	    new->value[new->size-1] = overflow_vals[0];
-	}
+	}*/
+
+    if(overflow_vals[new->size-1] != 0){//bad
+        new->size += 1;
+        new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
+        new->value[new->size-1] = overflow_vals[new->size-2];
+    }
 	
 	free(overflow_vals);
 	return new;
