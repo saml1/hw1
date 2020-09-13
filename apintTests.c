@@ -172,8 +172,6 @@ void cleanup(TestObjs *objs) {
 
 void testCreateFromU64(TestObjs *objs) {
 	ASSERT(0UL == apint_get_bits(objs->ap0, 0));
-	//uint64_t a = apint_get_bits(objs->ap0, 0);
-    //printf("%d\n", &a);
 	ASSERT(1UL == apint_get_bits(objs->ap1, 0));
 	ASSERT(110660361UL == apint_get_bits(objs->ap110660361, 0));
 	ASSERT(0xFFFFFFFFFFFFFFFFUL == apint_get_bits(objs->max1, 0));
@@ -197,8 +195,6 @@ void testLshiftN(TestObjs *objs) {
 	apint_destroy(result);
 
 	result = apint_lshift_n(objs->ap1, 17);
-	//printf("%lX\n", apint_get_bits(result, 0));
-    //printf("%lX\n", apint_get_bits(result, 1));
 	ASSERT(0x20000UL == apint_get_bits(result, 0));
 	ASSERT(0UL == apint_get_bits(result, 1));
 	apint_destroy(result);
@@ -209,28 +205,16 @@ void testLshiftN(TestObjs *objs) {
 	apint_destroy(result);
 	
 	result = apint_lshift_n(objs->max1, 1);
-    //printf("%lX\n", apint_get_bits(result, 0));
-    //printf("%lX\n", apint_get_bits(result, 1));
     ASSERT(0xfffffffffffffffe == apint_get_bits(result, 0));
     ASSERT(0x1 == apint_get_bits(result, 1));
     apint_destroy(result);
     
     result = apint_lshift_n(objs->randbig1, 1);
-    //printf("%lX\n", apint_get_bits(result, 0));
-    //printf("%lX\n", apint_get_bits(result, 1));
     ASSERT(0x16836a798c3a109c == apint_get_bits(result, 0));
     ASSERT(0x12063e94 == apint_get_bits(result, 1));
     apint_destroy(result);
     
     result = apint_lshift_n(objs->rubyrand1, 1);
-    /*printf("%lX\n", apint_get_bits(result, 0));
-    printf("%lX\n", apint_get_bits(result, 1));
-    printf("%lX\n", apint_get_bits(result, 2));
-    printf("%lX\n", apint_get_bits(result, 3));
-    printf("%lX\n", apint_get_bits(result, 4));
-    printf("%lX\n", apint_get_bits(result, 5));*/
-    //printf("%lX\n", apint_get_bits(result, 6));
-    //printf("%d\n", result->size);
     apint_destroy(result);
     
     result = apint_lshift_n(objs->realloctest, 19);
@@ -238,53 +222,30 @@ void testLshiftN(TestObjs *objs) {
     ASSERT(0x9BAC85555555550C == apint_get_bits(result, 1));
     ASSERT(0x3c0c == apint_get_bits(result, 2));
     ASSERT(0x0 == apint_get_bits(result, 3));
-    //printf(apint_format_as_hex(result));
-    //ASSERT(0 == strcmp("3c0c9bac85555555550c843b2a190b380000", (s=apint_format_as_hex(result))));
     char *s;
     ASSERT(0 == strcmp("3c0c9bac85555555550c843b2a190b380000", (s = apint_format_as_hex(result))));
     free(s);
-    /*printf("%lX\n", apint_get_bits(result, 0));
-    printf("%lX\n", apint_get_bits(result, 1));
-    printf("%lX\n", apint_get_bits(result, 2));
-    printf("%lX\n", apint_get_bits(result, 3));*/
     apint_destroy(result);
 
     result = apint_lshift_n(objs->randbig1, 60);
-    //printf("%s\n", apint_format_as_hex(result));
-    //printf("size: %d\n", result->size);
     ASSERT(0xe000000000000000 == apint_get_bits(result, 0));
     ASSERT(0xa0b41b53cc61d084 == apint_get_bits(result, 1));
     ASSERT(0x9031f4 == apint_get_bits(result, 2));
     ASSERT(0UL == apint_get_bits(result, 3));
-    //free(s);
     apint_destroy(result);
 
     result = apint_lshift_n(objs->randbig1, 65);
-    /*printf("%s\n", apint_format_as_hex(result));
-    printf("size: %d\n", result->size);
-    printf("bit 0: %llX\n", apint_get_bits(result, 0));
-    printf("bit 1: %llX\n", apint_get_bits(result, 1));
-    printf("bit 2: %llX\n", apint_get_bits(result, 2));
-    printf("bit 3: %llX\n", apint_get_bits(result, 3));*/
     ASSERT(0x0000000000000000 == apint_get_bits(result, 0));
     ASSERT(0x16836a798c3a109c == apint_get_bits(result, 1));
     ASSERT(0x12063e94 == apint_get_bits(result, 2));
     ASSERT(0UL == apint_get_bits(result, 3));
-    //free(s);
     apint_destroy(result);
 
     result = apint_lshift_n(objs->randbig1, 64);
-    /*printf("%s\n", apint_format_as_hex(result));
-    printf("size: %d\n", result->size);
-    printf("bit 0: %llX\n", apint_get_bits(result, 0));
-    printf("bit 1: %llX\n", apint_get_bits(result, 1));
-    printf("bit 2: %llX\n", apint_get_bits(result, 2));
-    printf("bit 3: %llX\n", apint_get_bits(result, 3));*/
     ASSERT(0x0000000000000000 == apint_get_bits(result, 0));
     ASSERT(0x0b41b53cc61d084e == apint_get_bits(result, 1));
     ASSERT(0x9031f4a == apint_get_bits(result, 2));
     ASSERT(0UL == apint_get_bits(result, 3));
-    //free(s);
     apint_destroy(result);
 }
 
@@ -307,9 +268,6 @@ void testCompare(TestObjs *objs) {
 
 void testFormatAsHex(TestObjs *objs) {
 	char *s;
-	//s = apint_format_as_hex(objs->ap0);
-    //printf("returned: %c\n", s[0]);
-    //printf("strcmp: %d\n", strcmp("0", s));
 	ASSERT(0 == strcmp("0", (s = apint_format_as_hex(objs->ap0))));
 	free(s);
 
@@ -347,7 +305,6 @@ void testAdd(TestObjs *objs) {
 
 	/* 1 + 0 = 1 */
 	sum = apint_add(objs->ap1, objs->ap0);
-	//printf("sum: %d\n", sum->value[0]);
 	ASSERT(0 == strcmp("1", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
@@ -366,33 +323,22 @@ void testAdd(TestObjs *objs) {
 
 	/* FFFFFFFFFFFFFFFF + 1 = 10000000000000000 */
 	sum = apint_add(objs->max1, objs->ap1);
-	//printf("sum: %d\n", sum->value[1]);
 	ASSERT(0 == strcmp("10000000000000000", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
 	
 	sum = apint_add(objs->rubyrandadd1, objs->rubyrandadd2);
-	/*printf("sum: %lX\n", sum->value[0]);
-	printf("sum: %lX\n", sum->value[1]);
-	printf("sum: %lX\n", sum->value[2]);
-	printf("size: %d\n", sum->size);*/
 	ASSERT(0 == strcmp("152f2cba50073e3f7728184e1c99018e67c5c", (s = apint_format_as_hex(sum))));
 	apint_destroy(sum);
 	free(s);
 
     sum = apint_add(objs->carrysub1, objs->carrysub2);
-    //printf("sum: %lX\n", sum->value[0]);
-    //printf("sum: %lX\n", sum->value[1]);
     ASSERT(0 == strcmp("10000000000000001", (s = apint_format_as_hex(sum))));
     apint_destroy(sum);
     free(s);
 
     sum = apint_add(objs->max1, objs->max1);
-    //printf("sum: %d\n", sum->value[1]);
     ASSERT(0 == strcmp("1fffffffffffffffe", (s = apint_format_as_hex(sum))));
-    //printf("size: %d\n", sum->size);
-    //printf("sum: %lX\n", sum->value[0]);
-    //printf("sum: %lX\n", sum->value[1]);
     apint_destroy(sum);
     free(s);
 
@@ -444,12 +390,6 @@ void testSub(TestObjs *objs) {
 	a = apint_create_from_hex("7e35207519b6b06429378631ca460905c19537644f31dc50114e9dc90bb4e4ebc43cfebe6b86d");
 	b = apint_create_from_hex("9fa0fb165441ade7cb8b17c3ab3653465e09e8078e09631ec8f6fe3a5b301dc");
 	diff = apint_sub(a, b);
-	/*printf("%lX\n", apint_get_bits(diff, 0));
-	printf("%lX\n", apint_get_bits(diff, 1));
-	printf("%lX\n", apint_get_bits(diff, 2));
-	printf("%lX\n", apint_get_bits(diff, 3));
-	printf("%lX\n", apint_get_bits(diff, 4));
-	printf("%lX\n", apint_get_bits(diff, 5));*/
 	ASSERT(0 == strcmp("7e35207519b6afc4883c6fdd8898213a367d73b918de95f20766963b0251c622cd3ec4633b691",
 		(s = apint_format_as_hex(diff))));
 	apint_destroy(diff);
@@ -458,25 +398,17 @@ void testSub(TestObjs *objs) {
 	free(s);
 
 	diff = apint_sub(objs->carrysub1,objs->carrysub2);
-    /*printf("bit 0: %lX\n", apint_get_bits(diff, 0));
-    printf("bit 1: %lX\n", apint_get_bits(diff, 1));
-    printf("size: %d\n", diff->size);*/
     ASSERT(0 == strcmp("ffffffffffffffff", (s = apint_format_as_hex(diff))));
     apint_destroy(diff);
     free(s);
 
     diff = apint_sub(objs->carrysub3,objs->carrysub2);
-    //printf("bit 0: %lX\n", apint_get_bits(diff, 0));
-    //printf("bit 1: %lX\n", apint_get_bits(diff, 1));
-    //printf("size: %d\n", diff->size);
     ASSERT(0 == strcmp("10ffffffffffffffff", (s = apint_format_as_hex(diff))));
     apint_destroy(diff);
     free(s);
 
     diff = apint_sub(objs->rubyrand3, objs->rubyrand4);
-    //printf("%s\n", apint_format_as_hex(diff));
     ASSERT(0 == strcmp("58230c28fbd4c50f93b2121929abd594b8ae1a65c56ee1db5be86b3faade7c77d83017f51aa49b6b9c58b", (s = apint_format_as_hex(diff))));
-    //ASSERT(0 == strcmp("58230c28fbd4c50f93b2121929abd594b8ae1a65c56ee1db5be87b3faade7c77d83017f51aa49b6b9c58b", (s = apint_format_as_hex(diff))));
     apint_destroy(diff);
     free(s);
 }
@@ -507,16 +439,9 @@ void testLshift(TestObjs *objs){
     apint_destroy(result);
     
     result = apint_lshift(objs->randbig2);
-    printf("%llX\n", apint_get_bits(result, 0));
-    printf("%llX\n", apint_get_bits(result, 1));
-    printf("%llX\n", apint_get_bits(result, 2));
-    printf("%llX\n", apint_get_bits(result, 3));
-    printf("%llX\n", apint_get_bits(result, 4));
     char * s;
     s = apint_format_as_hex(result);
-    printf("%s\n", s);
-    printf("size: %d\n", result->size);
-    printf("randbig2 size: %d\n", objs->randbig2->size);
+    ASSERT(0 == strcmp("c495573b91de89e0ae9067eaf4c0dba2fbafb1a55cc3bd771610", (s)));
     free(s);
     ASSERT(0xb1a55cc3bd771610 == apint_get_bits(result, 0));
     ASSERT(0x67eaf4c0dba2fbaf == apint_get_bits(result, 1));

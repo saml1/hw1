@@ -101,7 +101,7 @@ void apint_destroy(ApInt *ap) {
  *  uint64_t value containing 64 bits of the binary representation of ap
  */
 uint64_t apint_get_bits(ApInt *ap, unsigned n) {
-	if(n > (unsigned) ap->size - 1){
+	if(n > (unsigned) ap->size - 1){//out of range
 	    return 0UL;
 	}
     return ap->value[n];
@@ -122,12 +122,12 @@ int apint_highest_bit_set(ApInt *ap) {
 	}
 	
 	int temp = 0;
-	for(int i = 0; i < 64; i++){
+	for(int i = 0; i < 64; i++){//looking at most significant uint64_t
 	    if(ap->value[ap->size - 1] >= pow(2, i)){
 	        temp = i;
 	    }
 	}
-	return temp + 64*(ap->size -1);
+	return temp + 64*(ap->size -1);//taking into account total amount of uint64_ts
 }
 
 /*
@@ -142,29 +142,23 @@ int apint_highest_bit_set(ApInt *ap) {
 ApInt *apint_lshift(ApInt *ap) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	new->size = ap->size;
-	new->value = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//will have to realloc if overflow
+	new->value = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//may have to realloc if overflow
 
 	uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//will hold values of high bits lost from overflow
 	
-	for(int i = ap->size - 1; i >= 0; i--){//going from lowest to highest index
-	    overflow_vals[i] = ap->value[i] >> 63;//this is what needs to be added to the next index);
+	for(int i = ap->size - 1; i >= 0; i--){//going from highest to lowest index
+	    overflow_vals[i] = ap->value[i] >> 63;//this is what needs to be added to the next index;
 	    new->value[i] = ap->value[i] << 1;//may lose bits to overflow but was recorded in overflow_vals
 	}
 	
-	for(int i = ap->size -1; i >0; i--){
+	for(int i = ap->size -1; i >0; i--){//adding overflow values to each bit
 	    new->value[i] += overflow_vals[i-1];
 	}
 
-	/*if(overflow_vals[0] != 0){
-	    new->size += 1;
-	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-	    new->value[new->size-1] = overflow_vals[0];
-	}*/
-
-    if(overflow_vals[new->size-1] != 0){//bad
+    if(overflow_vals[new->size-1] != 0){//if there was overflow at the end, realloc with bigger size
         new->size += 1;
         new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-        new->value[new->size-1] = overflow_vals[new->size-2];
+        new->value[new->size-1] = overflow_vals[new->size-2];//takes into account end of overflow_vals
     }
 	
 	free(overflow_vals);
@@ -186,29 +180,21 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	new->size = ap->size;
 	new->value = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);
 
-
-	if(n >= 64 && n % 64 == 0){
+	if(n >= 64 && n % 64 == 0){//if shifting by a multiple of 64, just realloc and move over uint64_t values- no need for shifting
         new->size += n / 64;
         new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-        /*for(int i = 0; i < new->size; i++){
-            new->value[i + n/64] = ap->value[i];
-        }*/
         for(unsigned int i = new->size -1; i >= n/64; i--){
             new->value[i] = ap->value[i-n/64];
         }
-        /*for(int i = new->size - 1; i > 0; i--){
-            new->value[i] = new->value[i-1];
-        }*/
         for(unsigned int i = 0; i < n / 64; i++){
             new->value[i] = 0;
-            //printf("here\n");
         }
         return new;
 	}
 
-    uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);
+    uint64_t* overflow_vals = (uint64_t *) malloc(sizeof(uint64_t) * ap->size);//keeps track of overflow values
 
-	for(int i = ap->size - 1; i >= 0; i--){//going from lowest to highest index
+	for(int i = ap->size - 1; i >= 0; i--){//going from highest to lowest index
 	    overflow_vals[i] = ap->value[i] >> (64 - n);//this is what needs to be added to the next index
 	    new->value[i] = ap->value[i] << n;//may lose bits to overflow but was recorded in overflow_vals
 	}
@@ -217,30 +203,22 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
 	    new->value[i] += overflow_vals[i-1];
 	}
 
-	if(overflow_vals[new->size-1] != 0){//bad
+	if(overflow_vals[new->size-1] != 0){//if there was overflow at the end, realloc with bigger size
 	    new->size += 1;
 	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-	    new->value[new->size-1] = overflow_vals[new->size-2];
+	    new->value[new->size-1] = overflow_vals[new->size-2];//takes into account end of overflow_vals
 	}
 
-	if(n >= 64 && n % 64 != 0){//check if this should be >=64
+	if(n >= 64 && n % 64 != 0){//if shifting by more than 1 uint64_t but not by a multiple of 64, realloc and shift everything over
         new->size += n / 64;
         new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
         for(int i = new->size - 1; i > 0; i--){
             new->value[i] = new->value[i-1];
         }
-        for(unsigned int i = 0; i < n / 64; i++){
+        for(unsigned int i = 0; i < n / 64; i++){//setting right bits to 0
             new->value[i] = 0;
-            //printf("here\n");
         }
 	}
-	
-	/*if(overflow_vals[0] != 0){//what ive been using
-	    //printf("overflow\n");
-	    new->size += 1;
-	    new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
-	    new->value[new->size-1] = overflow_vals[new->size-2];
-	}*/
 	
 	free(overflow_vals);
 	return new;
@@ -256,7 +234,7 @@ ApInt *apint_lshift_n(ApInt *ap, unsigned n) {
  *  char* representing the value of ap in hex format
  */
 char *apint_format_as_hex(ApInt *ap) {
-	if(ap->size == 1 && ap->value[0] == 0){
+	if(ap->size == 1 && ap->value[0] == 0){//if 0
 	    char * s = (char *) malloc(sizeof(char) * 2);
 	    s[0] = '0';
 	    s[1] = '\0';
@@ -264,8 +242,8 @@ char *apint_format_as_hex(ApInt *ap) {
 	}
 	char * s = (char *) malloc(sizeof(char) * 2);
 	int string_size = 0;
-	for(int i = ap->size - 1; i >= 0; i--){//looping through each value element
-	    uint64_t curr_val = ap->value[i];
+	for(int i = ap->size - 1; i >= 0; i--){//looping through each uint64_t
+	    uint64_t curr_val = ap->value[i];//curr_val starts as the value of the uint64_t
 	    uint64_t temp = 0;
 	    for(int j = 15; j >= 0; j--){
 	        if(curr_val >= pow(16, j)){
@@ -273,18 +251,17 @@ char *apint_format_as_hex(ApInt *ap) {
 	            if(temp == 16){
 	                temp -= 1;
 	            }
-	            curr_val -= temp * (uint64_t) pow(16, j);
-	            string_size ++;
+	            curr_val -= temp * (uint64_t) pow(16, j);//getting curr_val ready for next iteration
+	            string_size ++;//now to add the letter
 	            s = realloc(s, string_size * sizeof(char) + 1);
 	            if(temp < 10){
 	                s[string_size -1] = 48 + temp;//48 is '0'
 	            }else{
 	                s[string_size-1] = 87 + temp; //97 is 'a'
 	            }
-	        }else if(string_size > 0){
+	        }else if(string_size > 0){//checking if there should be a 0 in the hex representation
 	            string_size++;
 	            s = realloc(s, string_size * sizeof(char) + 1);
-	            //printf("here bro\n");
 	            s[string_size-1] = '0';
 	        }
 	    }	   
@@ -305,8 +282,8 @@ char *apint_format_as_hex(ApInt *ap) {
  */
 ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	ApInt * new = (ApInt *) malloc(sizeof(ApInt));
-	int smallest_size = 0;
-	
+	int smallest_size = 0;//for the for loop that adds a's bit and b's bit only if they both exist
+	//finding what new ApInt's size should be
 	if(a->size > b->size){
 	    new->size = a->size;
 	    smallest_size = b->size;
@@ -315,7 +292,7 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	    smallest_size = a->size;
 	}
 	new->value = (uint64_t *) malloc(sizeof(uint64_t) * new->size);
-	for(int i = 0; i < new->size; i++){
+	for(int i = 0; i < new->size; i++){//initializing all bits to 0 at first
 	    new->value[i] = 0;
 	}
 	
@@ -323,18 +300,18 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
 	    uint64_t temp = a->value[i] + b->value[i];
 	    if(temp < a->value[i] || temp < b->value[i]){//overflow
 	        new->value[i] += temp;
-	        if(i < new->size-1){
+	        if(i < new->size-1){//must carry over to next bit if there is a next bit
 	            new->value[i+1] += 1;
-	        }else{
+	        }else{//if at most significant bit, must realloc
 	            new->size += 1;
 	            new->value = (uint64_t *) realloc(new->value, sizeof(uint64_t)*new->size);
 	            new->value[i+1] = 1;
 	        }
-	    }else{
+	    }else{//no overflow, simply add temp
 	        new->value[i] += temp;
 	    }
 	}
-	if(a->size != b->size){
+	if(a->size != b->size){//this adds up bits that only exist in a or only exist in b
 	    for(int i = smallest_size; i < new->size; i++){
 	     if(a->size > b->size){
 	          new->value[i] = a->value[i];
@@ -357,29 +334,27 @@ ApInt *apint_add(const ApInt *a, const ApInt *b) {
  *  ApInt representing value of a minus b
  *  Returns NULL if b > a
  */
-ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
+ApInt *apint_sub(const ApInt *a, const ApInt *b) {
 	if(apint_compare(a,b) < 0){//if b is greater than a
 	    return NULL;
 	}else if(apint_compare(a,b) == 0){//if a = b
 	    return apint_create_from_u64(0UL);
-	}else{
+	}else{//if a > b
 	    ApInt * new = (ApInt *) malloc(sizeof(ApInt));
 	    new->size = a->size;
 	    new->value = (uint64_t *) malloc(sizeof(uint64_t) * new->size);
-	    for(int i = 0; i < new->size; i++){//setting new values to a's initially
+	    for(int i = 0; i < new->size; i++){//setting new values to a's values initially
 	        new->value[i] = a->value[i];
 	    }
-	    for(int i = 0; i < b->size; i++){
+	    for(int i = 0; i < b->size; i++){//now subtracting each bit of b from new
 	        if(a->value[i] > b->value[i]){//simple math
 	            new->value[i] -= b->value[i];
-	        }else{//more complicated
+	        }else{//more complicated (borrowing)
 	            new->value[i+1] -= 1;
 	            if(new->value[i+1] == 0){
-                    //printf("here\n");
 	                new->size -= 1;
 	                new->value = (uint64_t*) realloc(new->value, sizeof(uint64_t) * new->size);
 	            }
-	            //new->value[i] = 0xFFFFFFFFFFFFFFFF - b->value[i] + a->value[i]+1;
 	            new->value[i] -= b->value[i];
 	        }
 	    }
@@ -400,11 +375,11 @@ ApInt *apint_sub(const ApInt *a, const ApInt *b) {//a minus b
  *  0 if left = right
  */
 int apint_compare(const ApInt *left, const ApInt *right) {
-	if(left->size > right-> size){
+	if(left->size > right-> size){//first comparing size
 	    return 1;
 	}else if(left->size < right->size){
 	    return -1;
-	}else{;
+	}else{//if their sizes are equal, compare each bit starting with most significant bit
 	    for(int i = left->size - 1; i >= 0; i--){
 	        if(left->value[i] > right->value[i]){
 	            return 1;
